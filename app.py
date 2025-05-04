@@ -13,7 +13,7 @@ def load_model():
 model = load_model()
 
 # Judul web
-st.title("🦷 Deteksi Karies Gigi dengan Transfer Learning")
+st.title("🦷DENTAXO🦷")
 
 st.write("Upload gambar gigi Anda untuk prediksi karies atau sehat.")
 
