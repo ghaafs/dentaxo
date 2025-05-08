@@ -14,7 +14,7 @@ model = tf.keras.models.load_model('ICDAS-90-part2.h5')
 img_size = (128, 128)
 
 # UI Streamlit
-st.title("🦷 Deteksi Karies Gigi berdasarkan ICDAS")
+st.title("🦷 DENTAXO 🦷")
 st.write("Upload gambar gigi untuk mendeteksi tingkat keparahan karies berdasarkan ICDAS.")
 
 # Upload gambar
