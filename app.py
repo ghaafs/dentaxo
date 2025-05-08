@@ -8,7 +8,7 @@ from PIL import Image
 class_names = ['Sehat', 'Ringan', 'Sedang', 'Berat']
 
 # Load model
-model = tf.keras.models.load_model('ICDAS-90-part2.h5')
+model = tf.keras.models.load_model('model-icdas-1.h5')
 
 # Set ukuran input gambar (harus sama dengan saat training)
 img_size = (128, 128)
@@ -23,7 +23,7 @@ uploaded_file = st.file_uploader("Pilih gambar gigi...", type=["jpg", "png", "jp
 if uploaded_file is not None:
     # Tampilkan gambar
     img = Image.open(uploaded_file)
-    st.image(img, caption='Gambar Diupload', use_column_width=True)
+    st.image(img, caption='Gambar Diupload', use_container_width=True)
 
     # Preprocessing
     img = img.resize(img_size)
