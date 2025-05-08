@@ -10,7 +10,7 @@ class_names = ['Sehat', 'Ringan', 'Sedang', 'Berat']
 # Load model
 model = tf.keras.models.load_model('model-icdas-1.h5')
 
-# Set ukuran input gambar (harus sama dengan saat training)
+# Set ukuran input gambar
 img_size = (128, 128)
 
 # UI Streamlit
