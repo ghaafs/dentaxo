@@ -51,3 +51,13 @@ if uploaded_file is not None:
         st.warning("⚠️ Terdeteksi karies ringan. Disarankan untuk menjaga kebersihan dan periksa rutin.")
     elif predicted_label == "Advanced":
         st.error("🚨 Karies terdeteksi cukup parah. SEGERA periksa ke dokter gigi untuk penanganan lebih lanjut.")
+
+
+st.markdown("""
+<hr style="border:1px solid gray;margin-top:20px;">
+<p style='text-align: center; color: gray; font-size: small;'>
+     Made with ❤️ by Ghany Fitriamara
+</p>
+""", unsafe_allow_html=True)
+
+
