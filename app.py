@@ -5,10 +5,10 @@ import numpy as np
 from PIL import Image
 
 # Daftar nama kelas ICDAS
-class_names = ['Sehat', 'Ringan', 'Sedang', 'Berat']
+class_names = ['Advanced', 'Early', 'Healthy']
 
 # Load model
-model = tf.keras.models.load_model('ICDAS-80-part4.h5')
+model = tf.keras.models.load_model('ICDAS-90-part5.h5')
 
 # Set ukuran input gambar
 img_size = (128, 128)
@@ -45,11 +45,9 @@ if uploaded_file is not None:
         st.write(f"{class_names[idx]}: `{prob * 100:.2f}%`")
     
     # Notifikasi berdasarkan prediksi
-    if predicted_label == "Sehat":
+    if predicted_label == "Healthy":
         st.success("✅ Tidak terdeteksi karies. Tetap jaga kebersihan gigi ya!")
-    elif predicted_label == "Ringan":
+    elif predicted_label == "Early":
         st.warning("⚠️ Terdeteksi karies ringan. Disarankan untuk menjaga kebersihan dan periksa rutin.")
-    elif predicted_label == "Sedang":
-        st.warning("⚠️ Terdeteksi karies sedang. Disarankan untuk memeriksakan ke dokter gigi.")
-    elif predicted_label == "Berat":
+    elif predicted_label == "Advanced":
         st.error("🚨 Karies terdeteksi cukup parah. SEGERA periksa ke dokter gigi untuk penanganan lebih lanjut.")
