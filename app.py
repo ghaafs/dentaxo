@@ -19,23 +19,64 @@ session_counter = st.session_state.setdefault("predictions", 0)
 # ========== STYLE ========== #
 st.markdown("""
     <style>
-        body, .main, .block-container { background-color: #fdfdff; }
-        h1, h2, h3, .stMarkdown { color: #5D3FD3; }
-        .stButton>button {
-            background-color: #5D3FD3;
-            color: white;
-            border-radius: 8px;
-            font-weight: bold;
+        /* Background */
+        body, .main, .block-container {
+            background-color: #e7f0f7; /* biru muda lembut, kesan klinis & bersih */
+            color: #1a1a1a;
         }
+
+        /* Judul dan teks */
+        h1, h2, h3, .stMarkdown {
+            color: #0077b6; /* biru tua yang elegan dan profesional */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Button */
+        .stButton>button {
+            background-color: #0096c7; /* biru toska cerah */
+            color: white;
+            border-radius: 12px;
+            padding: 0.5em 1.2em;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 150, 199, 0.3);
+        }
+        .stButton>button:hover {
+            background-color: #0077b6; /* gelapkan sedikit saat hover */
+            cursor: pointer;
+        }
+
+        /* Footer */
         .footer {
-            margin-top: 4em;
+            margin-top: 3em;
             padding: 1em;
             text-align: center;
             font-size: 0.9em;
-            color: #666;
+            color: #555;
+            border-top: 1px solid #c7d8e8;
+            font-style: italic;
+            background-color: #f0f7fa;
         }
+
+        /* Uploader box */
+        .css-1y4p8pa {
+            border: 2px dashed #0096c7 !important;
+            border-radius: 12px !important;
+            padding: 1rem !important;
+            background-color: #dff6ff;
+        }
+
+        /* Probabilities list */
+        div.stMarkdown > ul > li {
+            margin-bottom: 0.4em;
+            font-weight: 500;
+            color: #023e8a;
+        }
+
     </style>
 """, unsafe_allow_html=True)
+
 
 # ========== SIDEBAR MENU ========== #
 menu = st.sidebar.radio("🔍 Menu", [
