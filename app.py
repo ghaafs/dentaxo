@@ -3,7 +3,6 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
-import urllib.parse
 
 # ========== CONFIG ========== #
 st.set_page_config(
@@ -22,29 +21,29 @@ st.markdown("""
     <style>
         /* Background */
         body, .main, .block-container {
-            background-color: #e7f0f7; /* biru muda lembut, kesan klinis & bersih */
-            color: #1a1a1a;
+            background-color: #e6f4ea; /* hijau muda soft */
+            color: #3a3a3a;
         }
 
         /* Judul dan teks */
         h1, h2, h3, .stMarkdown {
-            color: #0077b6; /* biru tua yang elegan dan profesional */
+            color: #6a4c93; /* ungu muda soft */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         /* Button */
         .stButton>button {
-            background-color: #0096c7; /* biru toska cerah */
+            background-color: #7bc47f; /* hijau segar */
             color: white;
             border-radius: 12px;
             padding: 0.5em 1.2em;
             font-weight: 600;
             font-size: 1rem;
             transition: background-color 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 150, 199, 0.3);
+            box-shadow: 0 4px 8px rgba(123, 196, 127, 0.3);
         }
         .stButton>button:hover {
-            background-color: #0077b6; /* gelapkan sedikit saat hover */
+            background-color: #5ea35e; /* hijau agak gelap saat hover */
             cursor: pointer;
         }
 
@@ -62,28 +61,29 @@ st.markdown("""
 
         /* Uploader box */
         .css-1y4p8pa {
-            border: 2px dashed #0096c7 !important;
+            border: 2px dashed #7bc47f !important;
             border-radius: 12px !important;
             padding: 1rem !important;
-            background-color: #dff6ff;
+            background-color: #dff6e3;
         }
 
         /* Probabilities list */
         div.stMarkdown > ul > li {
             margin-bottom: 0.4em;
             font-weight: 500;
-            color: #023e8a;
+            color: #4b3b6b;
         }
+
     </style>
 """, unsafe_allow_html=True)
+
 
 # ========== SIDEBAR MENU ========== #
 menu = st.sidebar.radio("🔍 Menu", [
     "🏠 Dashboard",
     "📘 Petunjuk Penggunaan",
     "ℹ️ Tentang DENTAXO",
-    "📤 Upload & Deteksi",
-    "✉️ Kritik & Saran"
+    "📤 Upload & Deteksi"
 ])
 
 # ========== HALAMAN: DASHBOARD ========== #
@@ -164,32 +164,6 @@ elif menu == "📤 Upload & Deteksi":
         st.markdown("#### 🔢 Probabilitas Kelas:")
         for i, prob in enumerate(pred):
             st.write(f"- {class_names[i]}: **{prob:.2%}**")
-
-# ========== HALAMAN: KRITIK & SARAN ========== #
-elif menu == "✉️ Kritik & Saran":
-    st.header("✉️ Kritik & Saran")
-    st.markdown("""
-    Kami sangat menghargai masukan Anda untuk meningkatkan aplikasi DENTAXO.
-    Silakan isi form di bawah dan klik tombol Kirim.
-    """)
-
-    with st.form("kritik_saran_form"):
-        name = st.text_input("Nama")
-        email = st.text_input("Email")
-        message = st.text_area("Pesan / Kritik & Saran")
-
-        submitted = st.form_submit_button("Kirim")
-
-        if submitted:
-            if not name or not email or not message:
-                st.warning("Mohon isi semua kolom sebelum mengirim.")
-            else:
-                subject = urllib.parse.quote("Kritik & Saran untuk DENTAXO")
-                body = urllib.parse.quote(f"Nama: {name}\nEmail: {email}\n\nPesan:\n{message}")
-                mailto_link = f"mailto:zelmerra@gmail.com?subject={subject}&body={body}"
-
-                st.success("Terima kasih atas kritik dan saran Anda! Klik link berikut untuk mengirim email:")
-                st.markdown(f"[Kirim Email ke zelmerra@gmail.com]({mailto_link})")
 
 # ========== FOOTER ========== #
 st.markdown("""
