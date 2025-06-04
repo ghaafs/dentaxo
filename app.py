@@ -4,7 +4,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
 
-# ========== CONFIG ========== #
+# ======= Config =======
 st.set_page_config(
     page_title="DENTAXO - Dental AI",
     page_icon="🦷",
@@ -16,67 +16,67 @@ st.set_page_config(
 model = load_model('ICDAS-80-part5.h5')
 class_names = ['Advanced', 'Early', 'Healthy']
 
-# Style CSS untuk tema ungu + hijau modern dan minimalis
+# ======= Style CSS =======
 st.markdown("""
 <style>
-    /* Background gradient putih ke hijau muda */
-    .main, body, .block-container {
-        background: linear-gradient(135deg, #f7f9fc, #d8f1e4);
-        color: #3b2e5a; /* ungu tua */
+    /* Background putih dengan sentuhan biru soft */
+    body, .main, .block-container {
+        background: #eaf4fc;
+        color: #1b365d;  /* biru navy gelap */
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* Judul besar ungu lembut */
+    /* Judul utama */
     h1, h2, h3 {
-        color: #6c5b7b; /* soft purple */
+        color: #1b365d;  /* biru navy gelap */
         font-weight: 700;
-        margin-bottom: 0.3em;
+        margin-bottom: 0.4em;
     }
 
-    /* Sidebar background hijau muda lembut */
+    /* Sidebar background biru pastel */
     .css-1d391kg {
-        background-color: #c8e6c9 !important; /* soft green */
-        color: #2e3d27;
+        background-color: #c9def8 !important;  /* biru pastel soft */
+        color: #0d1a33 !important; /* biru gelap untuk teks */
     }
 
-    /* Sidebar teks ungu gelap */
+    /* Sidebar teks */
     .css-1d391kg span, .css-1d391kg label {
-        color: #3b2e5a !important;
+        color: #0d1a33 !important;
         font-weight: 600;
     }
 
-    /* Tombol utama hijau dengan efek hover */
+    /* Tombol utama biru sedang dengan hover */
     div.stButton > button {
-        background-color: #4caf50; /* hijau segar */
+        background-color: #3a75c4;  /* biru medium */
         color: white;
         border-radius: 12px;
         padding: 0.6rem 1.5rem;
         font-size: 1.1rem;
         font-weight: 600;
-        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        box-shadow: 0 4px 10px rgba(58, 117, 196, 0.3);
         transition: background-color 0.3s ease;
     }
     div.stButton > button:hover {
-        background-color: #388e3c;
+        background-color: #2e5ea8;
         cursor: pointer;
     }
 
     /* File uploader styling */
     .css-1d0p7cg {
-        border: 3px dashed #6c5b7b !important; /* soft purple */
+        border: 3px dashed #3a75c4 !important; /* biru medium */
         border-radius: 16px !important;
         padding: 1.3rem !important;
-        background-color: #f0f4f8;
+        background-color: #f0f6fc;
     }
 
-    /* Prediction box */
+    /* Prediction alert box */
     .stAlert {
         border-radius: 14px;
         padding: 1rem 1.5rem;
         margin-top: 1rem;
     }
 
-    /* Footer styling */
+    /* Footer */
     .footer {
         text-align: center;
         font-style: italic;
@@ -89,13 +89,13 @@ st.markdown("""
     /* Probabilities list */
     div.stMarkdown > ul > li {
         font-weight: 600;
-        color: #4a3f61; /* purple shade */
+        color: #1b365d;
         margin-bottom: 0.3rem;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Sidebar menu
+# ======= Sidebar Menu =======
 menu = st.sidebar.radio(
     "Menu DENTAXO",
     ["🏠 Dashboard", "📘 Cara Pakai", "ℹ️ Tentang", "📤 Upload Gambar"]
