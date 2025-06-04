@@ -98,7 +98,7 @@ elif menu == "📤 Upload & Deteksi":
     if uploaded_file is not None:
         # Tampilkan gambar
         image = Image.open(uploaded_file)
-        st.image(image, caption='Gambar yang Diupload', use_column_width=True)
+        st.image(image, caption='Gambar yang Diupload', use_container_width=True)
 
         # Preprocessing
         image = image.resize((224, 224))  # Sesuaikan dengan input model
