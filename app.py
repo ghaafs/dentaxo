@@ -106,7 +106,10 @@ elif menu == "📤 Upload & Deteksi":
         img_array = img_to_array(image)
         img_array = np.expand_dims(img_array, axis=0)  
         img_array = img_array.astype('float32') / 255.0  
-        
+
+        st.write("Model input shape:", model.input_shape)
+        st.write("Image array shape:", img_array.shape)
+
         # Prediksi
         pred = model.predict(img_array)[0]
         predicted_index = np.argmax(pred)
