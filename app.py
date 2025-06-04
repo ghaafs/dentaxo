@@ -31,9 +31,9 @@ st.markdown("""
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Buttons: hijau jaket ITB soft */
+        /* Buttons: hijau soft */
         .stButton>button {
-            background-color: #4a774e; /* hijau jaket ITB */
+            background-color: #4a774e; /* hijau */
             color: white;
             border-radius: 10px;
             padding: 0.5em 1.2em;
