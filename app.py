@@ -176,6 +176,20 @@ elif menu == "📤 Upload Gambar":
         for i, prob in enumerate(prediction):
             st.write(f"- **{class_names[i]}**: {prob*100:.2f}%")
 
+        # Probabilities with Indonesian translation
+        st.markdown("### 🔢 Probabilitas Tiap Kelas:")
+        translations = {
+            "Advanced": "Kerusakan Parah",
+            "Early": "Tahap Awal",
+            "Healthy": "Sehat"
+        }
+
+        for i, prob in enumerate(prediction):
+            label = class_names[i]
+            indonesian = translations[label]
+            st.write(f"- **{label} ({indonesian})**: {prob*100:.2f}%")
+
+
 # ======= Footer =======
 st.markdown("""
 <div class="footer">
