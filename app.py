@@ -3,6 +3,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
+import time
 
 # ========== CONFIG ========== #
 st.set_page_config(
@@ -11,117 +12,158 @@ st.set_page_config(
     layout="centered"
 )
 
-# Load Model
-model = load_model('ICDAS-80-part5.h5')
+# ========== LOAD MODEL ========== #
+@st.cache_resource
+def load_dl_model():
+    return load_model('ICDAS-80-part5.h5')
 
-# Kelas
+model = load_dl_model()
 class_names = ['Advanced', 'Early', 'Healthy']
 
-# ========== STYLE ========== #
+# ========== CUSTOM STYLE ========== #
 st.markdown("""
     <style>
-        body { background-color: #ffffff; }
-        .main { background-color: #ffffff; }
-        .css-1d391kg {background-color: #ffffff;}
-        .block-container { padding-top: 2rem; padding-bottom: 2rem; }
-        h1, h2, h3 { color: #5D3FD3; }
-        .stButton>button {
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700&display=swap');
+
+        html, body, [class*="css"] {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+        }
+
+        .block-container {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        h1, h2, h3 {
+            color: #5D3FD3;
+        }
+
+        .stButton > button {
             background-color: #5D3FD3;
             color: white;
+            padding: 10px 24px;
+            font-weight: 600;
+            border-radius: 8px;
         }
-        .st-bf {
-            background-color: #ccf2d1;
+
+        .stRadio > div {
+            gap: 10px;
+        }
+
+        .prediction-card {
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(93, 63, 211, 0.2);
+            margin-top: 20px;
         }
     </style>
 """, unsafe_allow_html=True)
 
 # ========== SIDEBAR MENU ========== #
-menu = st.sidebar.radio("🔍 Menu", [
+menu = st.sidebar.radio("📁 Navigasi Menu", [
     "🏠 Dashboard",
     "📘 Petunjuk Penggunaan",
-    "ℹ️ Tentang DENTAXO",
-    "📤 Upload & Deteksi"
+    "🧠 Deteksi Gigi",
+    "ℹ️ Tentang DENTAXO"
 ])
 
 # ========== HALAMAN: DASHBOARD ========== #
 if menu == "🏠 Dashboard":
-    st.title("🦷 DENTAXO")
+    st.markdown("## 🦷 Selamat Datang di DENTAXO")
     st.markdown("""
-    **DENTAXO** adalah aplikasi klasifikasi kondisi gigi berbasis deep learning yang dapat mengenali tiga kategori:
-    - 🟥 Advanced (Kerusakan Parah)
-    - 🟨 Early (Tahap Awal)
-    - 🟩 Healthy (Sehat)
-
-    Dirancang untuk membantu masyarakat dan profesional kesehatan dalam mengenali kondisi gigi dari gambar secara cepat dan akurat.
+    **DENTAXO** adalah sistem klasifikasi citra gigi berbasis **Deep Learning** yang membantu deteksi dini masalah gigi.
+    
+    ### Kategori Klasifikasi:
+    - 🔴 **Advanced** – Kerusakan parah, perlu penanganan medis segera
+    - 🟡 **Early** – Tanda-tanda awal kerusakan
+    - 🟢 **Healthy** – Gigi sehat
+    
+    > Teknologi kami mendukung langkah awal pencegahan dan konsultasi digital untuk kesehatan gigi masyarakat.
     """)
 
 # ========== HALAMAN: PETUNJUK ========== #
 elif menu == "📘 Petunjuk Penggunaan":
-    st.header("📘 Petunjuk Penggunaan")
+    st.markdown("## 📘 Panduan Penggunaan")
     st.markdown("""
-    1. Siapkan gambar gigi yang jelas, fokus, dan dalam posisi yang baik.
-    2. Masuk ke menu **Upload & Deteksi**.
-    3. Klik **Upload** dan pilih gambar dari perangkat Anda.
-    4. Tunggu hasil prediksi muncul di layar.
+    1. Siapkan gambar gigi dengan pencahayaan baik dan fokus.
+    2. Buka menu **🧠 Deteksi Gigi**.
+    3. Upload gambar dan tunggu hasil analisis.
+    4. Baca interpretasi hasil dan saran tindakan.
 
-    ⚠️ Gambar yang buram atau terlalu gelap bisa menghasilkan prediksi yang tidak akurat.
+    ⚠️ Hindari gambar yang buram atau terlalu gelap.
     """)
 
-# ========== HALAMAN: TENTANG DENTAXO ========== #
-elif menu == "ℹ️ Tentang DENTAXO":
-    st.header("ℹ️ Tentang DENTAXO")
-    st.markdown("""
-    DENTAXO adalah sistem klasifikasi citra berbasis AI untuk mendeteksi kondisi gigi manusia.
-    
-    **Kategori Klasifikasi:**
-    - **Advanced**: Tanda kerusakan gigi tingkat lanjut seperti lubang besar, infeksi, atau gigi hancur.
-    - **Early**: Indikasi awal kerusakan gigi seperti plak, karies ringan, atau perubahan warna.
-    - **Healthy**: Struktur gigi masih sehat, tidak ditemukan tanda kerusakan yang signifikan.
+# ========== HALAMAN: DETEKSI GIGI ========== #
+elif menu == "🧠 Deteksi Gigi":
+    st.markdown("## 📤 Upload Gambar Gigi")
+    uploaded_file = st.file_uploader("Unggah gambar gigi Anda (JPG/PNG)", type=["jpg", "jpeg", "png"])
 
-    Dibangun dengan teknologi **Deep Learning CNN**, sistem ini dilatih dengan ribuan data gambar untuk mengenali pola visual dari berbagai kondisi gigi.
-    """)
-
-# ========== HALAMAN: UPLOAD & DETEKSI ========== #
-elif menu == "📤 Upload & Deteksi":
-    st.header("📤 Upload Gambar Gigi")
-    uploaded_file = st.file_uploader("Silakan upload gambar gigi dalam format JPG/PNG:", type=["jpg", "jpeg", "png"])
-
-    if uploaded_file is not None:
+    if uploaded_file:
         image = Image.open(uploaded_file)
-        st.image(image, caption='Gambar yang Diupload', use_container_width=True)
+        st.image(image, caption="🖼️ Gambar yang diupload", use_container_width=True)
 
-        # --- Preprocessing ---
+        # Preprocessing
         try:
-            image = image.convert("RGB")
-            image = image.resize((128, 128))
+            image = image.convert("RGB").resize((128, 128))
             img_array = img_to_array(image)
-            img_array = np.expand_dims(img_array, axis=0)
-            img_array = img_array.astype('float32') / 255.0
+            img_array = np.expand_dims(img_array, axis=0).astype('float32') / 255.0
 
-            st.write("Model input shape:", model.input_shape)
-            st.write("Image array shape:", img_array.shape)
+            with st.spinner('🔍 Menganalisis kondisi gigi...'):
+                time.sleep(2)  # efek loading
+                pred = model.predict(img_array)[0]
 
-            # --- Prediksi ---
-            pred = model.predict(img_array)[0]
             predicted_index = np.argmax(pred)
             predicted_label = class_names[predicted_index]
+            confidence = pred[predicted_index] * 100
 
-            # --- Tampilkan hasil ---
-            st.success(f"### 🧠 Prediction (EN): {predicted_label}")
-            
-            label_id = predicted_label.lower()
-            if label_id == "advanced":
-                st.error("**🦷 Prediksi (ID): Kerusakan Parah**\n\nGigi menunjukkan kerusakan berat dan sebaiknya segera ditangani dokter.")
-            elif label_id == "early":
-                st.warning("**🦷 Prediksi (ID): Tahap Awal**\n\nGigi menunjukkan tanda-tanda awal kerusakan. Perlu perawatan dini.")
+            # Hasil prediksi
+            st.markdown("### 🧪 Hasil Deteksi")
+            if predicted_label == 'Advanced':
+                st.markdown(f"""
+                <div class="prediction-card" style="background-color:#ffebee;">
+                    <h3>🔴 Kerusakan Parah</h3>
+                    <p>Probabilitas: <strong>{confidence:.2f}%</strong></p>
+                    <p>Gigi menunjukkan kerusakan berat. Disarankan segera konsultasi ke dokter gigi.</p>
+                </div>
+                """, unsafe_allow_html=True)
+
+            elif predicted_label == 'Early':
+                st.markdown(f"""
+                <div class="prediction-card" style="background-color:#fff8e1;">
+                    <h3>🟡 Tahap Awal</h3>
+                    <p>Probabilitas: <strong>{confidence:.2f}%</strong></p>
+                    <p>Ada tanda-tanda awal kerusakan. Perlu pemeriksaan lebih lanjut.</p>
+                </div>
+                """, unsafe_allow_html=True)
+
             else:
-                st.success("**🦷 Prediksi (ID): Sehat**\n\nGigi dalam kondisi sehat. Pertahankan kebiasaan menjaga kebersihan mulut!")
+                st.markdown(f"""
+                <div class="prediction-card" style="background-color:#e8f5e9;">
+                    <h3>🟢 Gigi Sehat</h3>
+                    <p>Probabilitas: <strong>{confidence:.2f}%</strong></p>
+                    <p>Gigi Anda dalam kondisi baik. Pertahankan kebiasaan kebersihan gigi!</p>
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.markdown("---")
-            st.write("Probabilitas Kelas:")
-            for i, prob in enumerate(pred):
-                st.write(f"- {class_names[i]}: {prob:.2%}")
+            with st.expander("📊 Rincian Probabilitas"):
+                for i, prob in enumerate(pred):
+                    st.progress(float(prob), f"{class_names[i]}: {prob:.2%}")
 
         except Exception as e:
             st.error("⚠️ Terjadi kesalahan saat memproses gambar.")
             st.exception(e)
+
+# ========== HALAMAN: TENTANG DENTAXO ========== #
+elif menu == "ℹ️ Tentang DENTAXO":
+    st.markdown("## ℹ️ Tentang Aplikasi")
+    st.markdown("""
+    **DENTAXO** adalah platform AI interaktif untuk deteksi kondisi gigi berbasis gambar.
+
+    ### Teknologi:
+    - Model CNN dengan akurasi tinggi
+    - Dataset gigi dari berbagai tingkat kerusakan
+    - Inferensi cepat dan berbasis cloud
+
+    Aplikasi ini bertujuan untuk mempercepat diagnosis awal serta memperluas akses masyarakat terhadap informasi kesehatan gigi yang akurat.
+    """)
