@@ -19,31 +19,31 @@ session_counter = st.session_state.setdefault("predictions", 0)
 # ========== STYLE ========== #
 st.markdown("""
     <style>
-        /* Background */
+        /* Background: very soft green */
         body, .main, .block-container {
-            background-color: #e6f4ea; /* hijau muda soft */
-            color: #3a3a3a;
+            background-color: #e7f0e9; /* soft green */
+            color: #2a2a2a;
         }
 
-        /* Judul dan teks */
+        /* Headings: soft purple */
         h1, h2, h3, .stMarkdown {
-            color: #6a4c93; /* ungu muda soft */
+            color: #7c6b9e; /* soft purple */
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Button */
+        /* Buttons: hijau jaket ITB soft */
         .stButton>button {
-            background-color: #7bc47f; /* hijau segar */
+            background-color: #4a774e; /* hijau jaket ITB */
             color: white;
-            border-radius: 12px;
+            border-radius: 10px;
             padding: 0.5em 1.2em;
             font-weight: 600;
             font-size: 1rem;
             transition: background-color 0.3s ease;
-            box-shadow: 0 4px 8px rgba(123, 196, 127, 0.3);
+            box-shadow: 0 3px 6px rgba(74, 119, 78, 0.4);
         }
         .stButton>button:hover {
-            background-color: #5ea35e; /* hijau agak gelap saat hover */
+            background-color: #3d633f; /* darker hijau */
             cursor: pointer;
         }
 
@@ -54,29 +54,28 @@ st.markdown("""
             text-align: center;
             font-size: 0.9em;
             color: #555;
-            border-top: 1px solid #c7d8e8;
+            border-top: 1px solid #b2c0b5;
             font-style: italic;
-            background-color: #f0f7fa;
+            background-color: #f6faf6;
         }
 
         /* Uploader box */
         .css-1y4p8pa {
-            border: 2px dashed #7bc47f !important;
+            border: 2px dashed #4a774e !important;
             border-radius: 12px !important;
             padding: 1rem !important;
-            background-color: #dff6e3;
+            background-color: #d9ead3;
         }
 
         /* Probabilities list */
         div.stMarkdown > ul > li {
             margin-bottom: 0.4em;
             font-weight: 500;
-            color: #4b3b6b;
+            color: #6b5d82; /* soft purple for text */
         }
 
     </style>
 """, unsafe_allow_html=True)
-
 
 # ========== SIDEBAR MENU ========== #
 menu = st.sidebar.radio("🔍 Menu", [
