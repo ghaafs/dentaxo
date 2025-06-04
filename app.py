@@ -8,7 +8,7 @@ from PIL import Image
 class_names = ['Advanced', 'Early', 'Healthy']
 
 # Load model
-model = tf.keras.models.load_model('ICDAS-90-part5.h5')
+model = tf.keras.models.load_model('ICDAS-80-part5.h5')
 
 # Set ukuran input gambar
 img_size = (128, 128)
