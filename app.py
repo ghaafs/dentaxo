@@ -6,169 +6,180 @@ from PIL import Image
 
 # ========== CONFIG ========== #
 st.set_page_config(
-    page_title="DENTAXO - Dental Classification App",
+    page_title="DENTAXO - Dental AI",
     page_icon="🦷",
-    layout="centered"
+    layout="centered",
+    initial_sidebar_state="expanded"
 )
 
-# Load Model
+# Load model
 model = load_model('ICDAS-80-part5.h5')
 class_names = ['Advanced', 'Early', 'Healthy']
-session_counter = st.session_state.setdefault("predictions", 0)
 
-# ========== STYLE ========== #
+# Style CSS untuk tema ungu + hijau modern dan minimalis
 st.markdown("""
-    <style>
-        /* Background: very soft green */
-        body, .main, .block-container {
-            background-color: #e7f0e9; /* soft green */
-            color: #2a2a2a;
-        }
+<style>
+    /* Background gradient putih ke hijau muda */
+    .main, body, .block-container {
+        background: linear-gradient(135deg, #f7f9fc, #d8f1e4);
+        color: #3b2e5a; /* ungu tua */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        /* Headings: soft purple */
-        h1, h2, h3, .stMarkdown {
-            color: #7c6b9e; /* soft purple */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    /* Judul besar ungu lembut */
+    h1, h2, h3 {
+        color: #6c5b7b; /* soft purple */
+        font-weight: 700;
+        margin-bottom: 0.3em;
+    }
 
-        /* Buttons: hijau soft */
-        .stButton>button {
-            background-color: #4a774e; /* hijau */
-            color: white;
-            border-radius: 10px;
-            padding: 0.5em 1.2em;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 3px 6px rgba(74, 119, 78, 0.4);
-        }
-        .stButton>button:hover {
-            background-color: #3d633f; /* darker hijau */
-            cursor: pointer;
-        }
+    /* Sidebar background hijau muda lembut */
+    .css-1d391kg {
+        background-color: #c8e6c9 !important; /* soft green */
+        color: #2e3d27;
+    }
 
-        /* Footer */
-        .footer {
-            margin-top: 3em;
-            padding: 1em;
-            text-align: center;
-            font-size: 0.9em;
-            color: #555;
-            border-top: 1px solid #b2c0b5;
-            font-style: italic;
-            background-color: #f6faf6;
-        }
+    /* Sidebar teks ungu gelap */
+    .css-1d391kg span, .css-1d391kg label {
+        color: #3b2e5a !important;
+        font-weight: 600;
+    }
 
-        /* Uploader box */
-        .css-1y4p8pa {
-            border: 2px dashed #4a774e !important;
-            border-radius: 12px !important;
-            padding: 1rem !important;
-            background-color: #d9ead3;
-        }
+    /* Tombol utama hijau dengan efek hover */
+    div.stButton > button {
+        background-color: #4caf50; /* hijau segar */
+        color: white;
+        border-radius: 12px;
+        padding: 0.6rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+        transition: background-color 0.3s ease;
+    }
+    div.stButton > button:hover {
+        background-color: #388e3c;
+        cursor: pointer;
+    }
 
-        /* Probabilities list */
-        div.stMarkdown > ul > li {
-            margin-bottom: 0.4em;
-            font-weight: 500;
-            color: #6b5d82; /* soft purple for text */
-        }
+    /* File uploader styling */
+    .css-1d0p7cg {
+        border: 3px dashed #6c5b7b !important; /* soft purple */
+        border-radius: 16px !important;
+        padding: 1.3rem !important;
+        background-color: #f0f4f8;
+    }
 
-    </style>
+    /* Prediction box */
+    .stAlert {
+        border-radius: 14px;
+        padding: 1rem 1.5rem;
+        margin-top: 1rem;
+    }
+
+    /* Footer styling */
+    .footer {
+        text-align: center;
+        font-style: italic;
+        color: #555;
+        padding: 1rem 0;
+        border-top: 1px solid #d3d3d3;
+        margin-top: 3rem;
+    }
+
+    /* Probabilities list */
+    div.stMarkdown > ul > li {
+        font-weight: 600;
+        color: #4a3f61; /* purple shade */
+        margin-bottom: 0.3rem;
+    }
+</style>
 """, unsafe_allow_html=True)
 
-# ========== SIDEBAR MENU ========== #
-menu = st.sidebar.radio("🔍 Menu", [
-    "🏠 Dashboard",
-    "📘 Petunjuk Penggunaan",
-    "ℹ️ Tentang DENTAXO",
-    "📤 Upload & Deteksi"
-])
+# Sidebar menu
+menu = st.sidebar.radio(
+    "Menu DENTAXO",
+    ["🏠 Dashboard", "📘 Cara Pakai", "ℹ️ Tentang", "📤 Upload Gambar"]
+)
 
-# ========== HALAMAN: DASHBOARD ========== #
+# ======= Dashboard =======
 if menu == "🏠 Dashboard":
     st.title("🦷 DENTAXO")
     st.markdown("""
-    **DENTAXO** adalah aplikasi klasifikasi kondisi gigi berbasis AI (Deep Learning CNN) untuk mengenali tiga kategori:
+    Selamat datang di **DENTAXO** — aplikasi deteksi karies gigi berbasis AI yang membantu mengklasifikasikan kondisi gigi Anda menjadi tiga kategori:
     
-    - 🟥 **Advanced**: Kerusakan gigi parah
-    - 🟨 **Early**: Kerusakan tahap awal
-    - 🟩 **Healthy**: Gigi sehat
+    - 🔴 **Advanced** (Kerusakan berat)
+    - 🟠 **Early** (Karies tahap awal)
+    - 🟢 **Healthy** (Gigi sehat)
     
-    Didesain untuk membantu masyarakat dan profesional kesehatan dalam mendeteksi masalah gigi melalui citra digital.
+    Aplikasi ini dirancang untuk mendukung deteksi dini kerusakan gigi dengan citra digital.
     """)
-    st.info(f"📈 Jumlah prediksi selama sesi ini: **{session_counter} kali**")
+    count = st.session_state.get("predictions", 0)
+    st.info(f"Jumlah prediksi selama sesi ini: **{count}** kali")
 
-# ========== HALAMAN: PETUNJUK ========== #
-elif menu == "📘 Petunjuk Penggunaan":
+# ======= Cara Pakai =======
+elif menu == "📘 Cara Pakai":
     st.header("📘 Cara Menggunakan DENTAXO")
     st.markdown("""
-    1. Siapkan gambar gigi yang **jelas, terang, dan fokus**, khusus untuk **1-3 gigi saja per gambar**.
-    2. Masuk ke menu **Upload & Deteksi**.
-    3. Klik **Upload**, lalu pilih file gambar dalam format JPG/PNG.
-    4. Tunggu hasil prediksi muncul di layar.
-
-    ⚠️ Gambar yang terlalu buram, gelap, atau menampilkan seluruh gigi sekaligus bisa menyebabkan hasil prediksi tidak akurat.
-
-    #### 📷 Contoh Gambar Ideal:
-    - Close-up 1 gigi berlubang
-    - 2 gigi bagian depan dengan karies
-    - 3 gigi kiri atas yang tampak jelas
+    1. Siapkan gambar gigi dengan pencahayaan dan fokus yang baik.
+    2. Gunakan menu **Upload Gambar** untuk mengunggah foto gigi (format JPG/PNG).
+    3. Tunggu hasil prediksi muncul di layar.
+    4. Gunakan hasil prediksi untuk konsultasi lebih lanjut dengan dokter gigi.
+    
+    ⚠️ Pastikan gambar hanya memuat 1-3 gigi agar hasil lebih akurat.
     """)
 
-# ========== HALAMAN: TENTANG ========== #
-elif menu == "ℹ️ Tentang DENTAXO":
+# ======= Tentang =======
+elif menu == "ℹ️ Tentang":
     st.header("ℹ️ Tentang DENTAXO")
     st.markdown("""
-    DENTAXO adalah sistem klasifikasi citra berbasis AI untuk deteksi dini kondisi gigi.
-
-    **Kategori Klasifikasi:**
-    - **Advanced**: Lubang besar, infeksi, gigi hancur
-    - **Early**: Plak, karies ringan, perubahan warna
-    - **Healthy**: Gigi utuh tanpa kerusakan
-
-    Aplikasi ini masih dalam tahap pengembangan dan tidak menggantikan diagnosis medis profesional.
+    DENTAXO adalah aplikasi berbasis AI yang menggunakan model CNN untuk mengklasifikasikan citra gigi ke dalam:
+    
+    - **Advanced**: Kerusakan berat yang memerlukan penanganan segera.
+    - **Early**: Kerusakan awal yang masih bisa diatasi dengan perawatan ringan.
+    - **Healthy**: Gigi sehat tanpa tanda kerusakan.
+    
+    Aplikasi ini sebagai alat bantu dan tidak menggantikan pemeriksaan dokter.
     """)
 
-# ========== HALAMAN: UPLOAD & DETEKSI ========== #
-elif menu == "📤 Upload & Deteksi":
-    st.header("📤 Upload Gambar Gigi")
-    uploaded_file = st.file_uploader("Silakan upload gambar gigi (JPG/PNG):", type=["jpg", "jpeg", "png"])
+# ======= Upload & Prediction =======
+elif menu == "📤 Upload Gambar":
+    st.header("📤 Unggah Gambar Gigi untuk Prediksi")
+    uploaded_file = st.file_uploader("Pilih file gambar (JPG/PNG)", type=["jpg", "jpeg", "png"])
 
     if uploaded_file:
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption='Gambar yang Diupload', use_container_width=True)
+        st.image(image, caption="Gambar yang diunggah", use_container_width=True)
 
         # Preprocess
-        image = image.resize((128, 128))
-        img_array = img_to_array(image)
+        img_resized = image.resize((128, 128))
+        img_array = img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0).astype('float32') / 255.0
 
-        # Prediction
-        pred = model.predict(img_array)[0]
-        predicted_index = np.argmax(pred)
-        predicted_label = class_names[predicted_index]
-        session_counter += 1
-        st.session_state.predictions = session_counter
+        # Predict
+        prediction = model.predict(img_array)[0]
+        pred_idx = np.argmax(prediction)
+        pred_label = class_names[pred_idx]
 
-        # Result
-        st.success(f"### 🧠 Prediksi (EN): {predicted_label}")
-        if predicted_label == "Advanced":
-            st.error("**🦷 Prediksi (ID): Kerusakan Parah**\n\nSegera konsultasikan ke dokter gigi.")
-        elif predicted_label == "Early":
-            st.warning("**🦷 Prediksi (ID): Tahap Awal**\n\nLakukan pemeriksaan dan perawatan ringan.")
+        # Update session counter
+        st.session_state["predictions"] = st.session_state.get("predictions", 0) + 1
+
+        # Show result
+        if pred_label == "Advanced":
+            st.error("🦷 Prediksi: Kerusakan Parah (Advanced)\nSegera konsultasi ke dokter gigi.")
+        elif pred_label == "Early":
+            st.warning("🦷 Prediksi: Tahap Awal (Early)\nPerawatan ringan disarankan.")
         else:
-            st.success("**🦷 Prediksi (ID): Sehat**\n\nGigi dalam kondisi baik. Tetap jaga kebersihan!")
+            st.success("🦷 Prediksi: Gigi Sehat (Healthy)\nJaga kebersihan gigi Anda!")
 
-        st.markdown("#### 🔢 Probabilitas Kelas:")
-        for i, prob in enumerate(pred):
-            st.write(f"- {class_names[i]}: **{prob:.2%}**")
+        # Probabilities
+        st.markdown("### 🔢 Probabilitas Tiap Kelas:")
+        for i, prob in enumerate(prediction):
+            st.write(f"- **{class_names[i]}**: {prob*100:.2f}%")
 
-# ========== FOOTER ========== #
+# ======= Footer =======
 st.markdown("""
-    <div class="footer">
-        Aplikasi ini dikembangkan oleh <b>Ghany Fitriamara Suci</b><br>
-        Program Studi Fisika, Universitas Islam Negeri (UIN) Jakarta<br>
-        Tahun 2025
-    </div>
+<div class="footer">
+    &copy; 2025 DENTAXO - Dikembangkan oleh Ghany Fitriamara Suci<br>
+    Program Studi Fisika, UIN Jakarta
+</div>
 """, unsafe_allow_html=True)
