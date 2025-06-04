@@ -3,6 +3,7 @@ import numpy as np
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
 from PIL import Image
+import urllib.parse
 
 # ========== CONFIG ========== #
 st.set_page_config(
@@ -73,17 +74,16 @@ st.markdown("""
             font-weight: 500;
             color: #023e8a;
         }
-
     </style>
 """, unsafe_allow_html=True)
-
 
 # ========== SIDEBAR MENU ========== #
 menu = st.sidebar.radio("🔍 Menu", [
     "🏠 Dashboard",
     "📘 Petunjuk Penggunaan",
     "ℹ️ Tentang DENTAXO",
-    "📤 Upload & Deteksi"
+    "📤 Upload & Deteksi",
+    "✉️ Kritik & Saran"
 ])
 
 # ========== HALAMAN: DASHBOARD ========== #
@@ -164,6 +164,32 @@ elif menu == "📤 Upload & Deteksi":
         st.markdown("#### 🔢 Probabilitas Kelas:")
         for i, prob in enumerate(pred):
             st.write(f"- {class_names[i]}: **{prob:.2%}**")
+
+# ========== HALAMAN: KRITIK & SARAN ========== #
+elif menu == "✉️ Kritik & Saran":
+    st.header("✉️ Kritik & Saran")
+    st.markdown("""
+    Kami sangat menghargai masukan Anda untuk meningkatkan aplikasi DENTAXO.
+    Silakan isi form di bawah dan klik tombol Kirim.
+    """)
+
+    with st.form("kritik_saran_form"):
+        name = st.text_input("Nama")
+        email = st.text_input("Email")
+        message = st.text_area("Pesan / Kritik & Saran")
+
+        submitted = st.form_submit_button("Kirim")
+
+        if submitted:
+            if not name or not email or not message:
+                st.warning("Mohon isi semua kolom sebelum mengirim.")
+            else:
+                subject = urllib.parse.quote("Kritik & Saran untuk DENTAXO")
+                body = urllib.parse.quote(f"Nama: {name}\nEmail: {email}\n\nPesan:\n{message}")
+                mailto_link = f"mailto:zelmerra@gmail.com?subject={subject}&body={body}"
+
+                st.success("Terima kasih atas kritik dan saran Anda! Klik link berikut untuk mengirim email:")
+                st.markdown(f"[Kirim Email ke zelmerra@gmail.com]({mailto_link})")
 
 # ========== FOOTER ========== #
 st.markdown("""
