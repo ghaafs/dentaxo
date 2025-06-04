@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # Load Model
-model = load_model('ICDAS-80-part5.h5')  # ganti dengan path model kamu
+model = load_model('ICDAS-80-part5.h5')
 
 # Kelas
 class_names = ['Advanced', 'Early', 'Healthy']
@@ -20,26 +20,17 @@ class_names = ['Advanced', 'Early', 'Healthy']
 # ========== STYLE ========== #
 st.markdown("""
     <style>
-        body {
-            background-color: #ffffff;
-        }
-        .main {
-            background-color: #ffffff;
-        }
+        body { background-color: #ffffff; }
+        .main { background-color: #ffffff; }
         .css-1d391kg {background-color: #ffffff;}
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        h1, h2, h3 {
-            color: #5D3FD3; /* ungu */
-        }
+        .block-container { padding-top: 2rem; padding-bottom: 2rem; }
+        h1, h2, h3 { color: #5D3FD3; }
         .stButton>button {
             background-color: #5D3FD3;
             color: white;
         }
         .st-bf {
-            background-color: #ccf2d1; /* hijau muda */
+            background-color: #ccf2d1;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -96,37 +87,41 @@ elif menu == "📤 Upload & Deteksi":
     uploaded_file = st.file_uploader("Silakan upload gambar gigi dalam format JPG/PNG:", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
-        # Tampilkan gambar
         image = Image.open(uploaded_file)
         st.image(image, caption='Gambar yang Diupload', use_container_width=True)
 
-        # Preprocessing
-        image = image.convert("RGB")  
-        image = image.resize((128, 128)) 
-        img_array = img_to_array(image)
-        img_array = np.expand_dims(img_array, axis=0)  
-        img_array = img_array.astype('float32') / 255.0  
+        # --- Preprocessing ---
+        try:
+            image = image.convert("RGB")
+            image = image.resize((128, 128))
+            img_array = img_to_array(image)
+            img_array = np.expand_dims(img_array, axis=0)
+            img_array = img_array.astype('float32') / 255.0
 
-        st.write("Model input shape:", model.input_shape)
-        st.write("Image array shape:", img_array.shape)
+            st.write("Model input shape:", model.input_shape)
+            st.write("Image array shape:", img_array.shape)
 
-        # Prediksi
-        pred = model.predict(img_array)[0]
-        predicted_index = np.argmax(pred)
-        predicted_label = class_names[predicted_index]
+            # --- Prediksi ---
+            pred = model.predict(img_array)[0]
+            predicted_index = np.argmax(pred)
+            predicted_label = class_names[predicted_index]
 
-        # Tampilkan hasil
-        st.success(f"### 🧠 Prediction (EN): {predicted_label}")
-        
-        label_id = predicted_label.lower()
-        if label_id == "advanced":
-            st.error("**🦷 Prediksi (ID): Kerusakan Parah**\n\nGigi menunjukkan kerusakan berat dan sebaiknya segera ditangani dokter.")
-        elif label_id == "early":
-            st.warning("**🦷 Prediksi (ID): Tahap Awal**\n\nGigi menunjukkan tanda-tanda awal kerusakan. Perlu perawatan dini.")
-        else:
-            st.success("**🦷 Prediksi (ID): Sehat**\n\nGigi dalam kondisi sehat. Pertahankan kebiasaan menjaga kebersihan mulut!")
+            # --- Tampilkan hasil ---
+            st.success(f"### 🧠 Prediction (EN): {predicted_label}")
+            
+            label_id = predicted_label.lower()
+            if label_id == "advanced":
+                st.error("**🦷 Prediksi (ID): Kerusakan Parah**\n\nGigi menunjukkan kerusakan berat dan sebaiknya segera ditangani dokter.")
+            elif label_id == "early":
+                st.warning("**🦷 Prediksi (ID): Tahap Awal**\n\nGigi menunjukkan tanda-tanda awal kerusakan. Perlu perawatan dini.")
+            else:
+                st.success("**🦷 Prediksi (ID): Sehat**\n\nGigi dalam kondisi sehat. Pertahankan kebiasaan menjaga kebersihan mulut!")
 
-        st.markdown("---")
-        st.write("Probabilitas Kelas:")
-        for i, prob in enumerate(pred):
-            st.write(f"- {class_names[i]}: {prob:.2%}")
+            st.markdown("---")
+            st.write("Probabilitas Kelas:")
+            for i, prob in enumerate(pred):
+                st.write(f"- {class_names[i]}: {prob:.2%}")
+
+        except Exception as e:
+            st.error("⚠️ Terjadi kesalahan saat memproses gambar.")
+            st.exception(e)
