@@ -171,11 +171,6 @@ elif menu == "📤 Upload Gambar":
         else:
             st.success("🦷 Prediksi: Gigi Sehat (Healthy)\nJaga kebersihan gigi Anda!")
 
-        # Probabilities
-        st.markdown("### 🔢 Probabilitas Tiap Kelas:")
-        for i, prob in enumerate(prediction):
-            st.write(f"- **{class_names[i]}**: {prob*100:.2f}%")
-
         # Probabilities with Indonesian translation
         st.markdown("### 🔢 Probabilitas Tiap Kelas:")
         translations = {
