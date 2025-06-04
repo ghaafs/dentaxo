@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # Load Model
-model = load_model('your_model_path.h5')  # ganti dengan path model kamu
+model = load_model('ICDAS-80-part5.h5')  # ganti dengan path model kamu
 
 # Kelas
 class_names = ['Advanced', 'Early', 'Healthy']
